@@ -17,14 +17,15 @@ export default function Record() {
   const canvasRef = useRef(null);
   const context = useRef(null);
   const recoder = useRef(null);
+  const frameId = useRef(null);
   useEffect(() => {
     setInterval(() => {
       setRandomNum(Date.now());
     }, 500);
 
     context.current = canvasRef.current.getContext('2d');
-    context.current.width = elementRef.clientWidth;
-    context.current.height = elementRef.clientHeight;
+    canvasRef.current.width = elementRef.current.clientWidth;
+    canvasRef.current.height = elementRef.current.clientHeight;
     window.html2canvas = html2canvas;
     // FIX: https://github.com/vercel/next.js/discussions/15965
     import("recordrtc").then(({ default: RecordRTC }) => {
@@ -35,22 +36,21 @@ export default function Record() {
   }, []);
 
   useEffect(() => {
-    if (isStart) {
-      looper()
-    }
+    looper(isStart)
   }, [isStart]);
 
 
-  const looper = () => {
+  const looper = (isStart) => {
+    if (!isStart) {
+      return;
+    }
     html2canvas(elementRef.current).then(function (canvas) {
       context.current.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
       context.current.drawImage(canvas, 0, 0, canvasRef.current.width, canvasRef.current.height);
-
-      if (!isStart) {
-        return;
+      if (isStart) {
+        frameId.current = requestAnimationFrame(() => looper(isStart));
       }
 
-      requestAnimationFrame(looper);
     });
   }
 
@@ -60,13 +60,14 @@ export default function Record() {
     await ffmpeg.run('-i', 'name', 'output.mp4');
     const data = ffmpeg.FS('readFile', 'output.mp4');
     setSrc(URL.createObjectURL(new Blob([data], {type : 'video/mp4'})));
-
   }
+
 
   const onClick = async () => {
     setIsStart(!isStart);
 
     if (isStart) {
+      window.cancelAnimationFrame(frameId.current);
       recoder.current.stopRecording(function () {
         const blob = recoder.current.getBlob();
         // setSrc(URL.createObjectURL(blob));
@@ -85,10 +86,9 @@ export default function Record() {
         <div ref={elementRef} style={{ border: '1px solid #ccc', width: 200, height: 200 }} >
           {randomNum}
         </div>
+        <canvas ref={canvasRef} />
         {src && <video controls autoPlay playsInline style={{ height: 200 }} src={src} />}
       </div>
-
-      <canvas ref={canvasRef} style={{ position: 'absolute', top: -99999999, left: -999999999, }}></canvas>
 
       <button onClick={onClick}>{isStart ? '暂停' : '开始'}</button>
     </div>
