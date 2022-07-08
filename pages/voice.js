@@ -1,5 +1,5 @@
 
-export default function Home() {
+export default function Voice()  {
   const queryParams = {
     // voiceURI: 'Ting-Ting',
     // lang: 'zh-CN',
@@ -7,8 +7,8 @@ export default function Home() {
     // pitch: 1,
     // rate: 1,
     text: '大扎好，我西渣渣辉。'
-}
-  const  onSpeak = () => {
+  }
+  const onSpeak = () => {
     const speechInstance = new SpeechSynthesisUtterance();
     Object.keys(queryParams).forEach(key => {
       speechInstance[key] = queryParams[key];
@@ -24,7 +24,7 @@ export default function Home() {
   }
   return (
     <div>
-       <div onClick={onSpeak}>speak</div>
+      <div onClick={onSpeak}>speak</div>
     </div>
   )
 }

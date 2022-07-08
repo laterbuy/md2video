@@ -6,9 +6,14 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "postinstall": "cp patch/RecordRTC.js node_modules/recordrtc/RecordRTC.js",
     "lint": "next lint"
   },
   "dependencies": {
+    "@ffmpeg/core": "^0.10.0",
+    "@ffmpeg/ffmpeg": "^0.10.1",
+    "coi-serviceworker": "^0.1.6",
+    "html2canvas": "^1.4.1",
     "next": "12.2.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
