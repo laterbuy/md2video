@@ -1,5 +1,5 @@
 
-export default function Voice()  {
+export default function Voice() {
   const queryParams = {
     // voiceURI: 'Ting-Ting',
     // lang: 'zh-CN',
@@ -12,9 +12,9 @@ export default function Voice()  {
     const speechInstance = new SpeechSynthesisUtterance();
     Object.keys(queryParams).forEach(key => {
       speechInstance[key] = queryParams[key];
-    })
-    console.log(speechInstance);
-    typeof speechSynthesis !== "undefined" && speechSynthesis.speak(speechInstance);
+    });
+
+    speechSynthesis.speak(speechInstance);
     speechInstance.onstart = () => {
       console.log('onstart')
     }
